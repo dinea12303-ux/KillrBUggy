@@ -3,18 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Книга</title>
+    <title>Библиотека Мутаций</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; color: #333; }
-        .chapter-list { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        a { text-decoration: none; color: #6a0dad; font-size: 18px; display: block; margin-bottom: 10px; }
-        a:hover { text-decoration: underline; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #2b2b36; color: #e0e0e0; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #d4a5ff; text-align: center; border-bottom: 2px solid #5a3d7a; padding-bottom: 10px; }
+        .container { background: #383845; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .chapter-link { display: block; background: #4a4a5a; margin: 10px 0; padding: 15px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 18px; border-left: 5px solid #d4a5ff; transition: 0.3s; }
+        .chapter-link:hover { background: #5a5a6a; transform: translateX(5px); }
+        
+        /* Админка */
+        .admin-panel { background: #1e1e26; padding: 20px; border-radius: 10px; border: 1px dashed #5a3d7a; }
+        .admin-panel h2 { color: #d4a5ff; margin-top: 0; font-size: 20px; }
+        input, textarea { width: 100%; box-sizing: border-box; margin-bottom: 15px; padding: 12px; border-radius: 5px; border: 1px solid #5a3d7a; background: #2b2b36; color: white; font-size: 16px; }
+        button { background: #7a4bb5; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #9665d4; }
+        .hint { font-size: 13px; color: #aaa; margin-top: -10px; margin-bottom: 15px; display: block; }
     </style>
 </head>
 <body>
-    <h1>Оглавление</h1>
-    <div class="chapter-list">
-        <a href="chapter1.html">Глава 1. Начало пути</a>
+
+    <h1>📖 Моя Книга</h1>
+
+    <div class="container">
+        <h2>Оглавление</h2>
+        <div id="chapters-list">
+            <a href="chapter1.html" class="chapter-link">Глава 1. Начало пути</a>
+            </div>
     </div>
+
+    <div class="admin-panel">
+        <h2>⚙️ Добавить новую главу</h2>
+        
+        <label>Твой GitHub Токен:</label>
+        <input type="password" id="gh-token" placeholder="Вставь токен сюда (начинается с ghp_)">
+        <span class="hint">Токен никуда не сохраняется, он нужен сайту только для отправки текста на твой GitHub.</span>
+
+        <label>Номер главы:</label>
+        <input type="number" id="chap-num" placeholder="Например: 2">
+
+        <label>Название главы:</label>
+        <input type="text" id="chap-title" placeholder="Например: Встреча с Системой">
+
+        <label>Текст главы:</label>
+        <textarea id="chap-text" rows="10" placeholder="Просто скопируй сюда весь текст из Ворда или Блокнота. Абзацы сохранятся автоматически..."></textarea>
+
+        <button onclick="publishChapter()" id="pub-btn">Опубликовать главу</button>
+        <p id="status-msg" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 18px;"></p>
+    </div>
+
+    <script>
+        async function publishChapter() {
+            const token = document.getElementById('gh-token').value.trim();
+            const num = document.getElementById('chap-num').value.trim();
+            const title = document.getElementById('chap-title').value.trim();
+            const text = document.getElementById('chap-text').value.trim();
+            const status = document.getElementById('status-msg');
+            const btn = document.getElementById('pub-btn');
+
+            if (!token || !num || !title || !text) {
+                status.style.color = "#ff6b6b";
+                status.innerText = "⚠️ Заполни все поля!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "⏳ Формирую страницы...";
+            status.innerText = "Создаю файл главы...";
+            status.style.color = "#d4a5ff";
+
+            const repo = "dinea12303-ux/KillrBUggy";
+            
+            // Формируем HTML самой главы (тоже с темным фоном)
+            const paragraphs = text.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('\n    ');
+            const htmlContent = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Глава ${num}: ${title}</title>
+    <style>
+        body { font-family: 'Georgia', serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; font-size: 20px; color: #d0d0d0; background-color: #1e1e26; }
+        p { text-indent: 1.5em; margin-bottom: 1em; }
+        .back-link { font-family: sans-serif; font-size: 16px; margin-bottom: 20px; display: inline-block; color: #d4a5ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Назад к оглавлению</a>
+    <h2 style="color: #fff;">Глава ${num}. ${title}</h2>
+    ${paragraphs}
+</body>
+</html>`;
+
+            const encodeBase64 = (str) => btoa(unescape(encodeURIComponent(str)));
+            const decodeBase64 = (str) => decodeURIComponent(escape(atob(str)));
+
+            try {
+                // Отправляем файл главы на GitHub
+                let res = await fetch(`https://api.github.com/repos/${repo}/contents/chapter${num}.html`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Добавлена глава ${num}`, content: encodeBase64(htmlContent) })
+                });
+
+                if (!res.ok) throw new Error("Ошибка. Проверь токен или номер главы (может, такой файл уже есть).");
+
+                status.innerText = "✅ Глава залита! Обновляю оглавление...";
+
+                // Забираем текущий index.html, чтобы обновить в нем ссылки
+                res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`);
+                const indexData = await res.json();
+                let indexHtml = decodeBase64(indexData.content);
+
+                // Добавляем новую кнопку в список
+                const newLink = `\n            <a href="chapter${num}.html" class="chapter-link">Глава ${num}. ${title}</a>`;
+                indexHtml = indexHtml.replace('', newLink + '\n            ');
+
+                // Сохраняем обновленное оглавление
+                res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Обновлено оглавление (Глава ${num})`, content: encodeBase64(indexHtml), sha: indexData.sha })
+                });
+
+                if (!res.ok) throw new Error("Глава создана, но оглавление не обновилось.");
+
+                status.style.color = "#4caf50";
+                status.innerText = `🎉 Глава ${num} успешно опубликована! Перезагрузи страницу через пару минут.`;
+                
+                // Очищаем форму
+                document.getElementById('chap-num').value = '';
+                document.getElementById('chap-title').value = '';
+                document.getElementById('chap-text').value = '';
+
+            } catch (error) {
+                status.style.color = "#ff6b6b";
+                status.innerText = `❌ Ошибка: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Опубликовать главу";
+            }
+        }
+    </script>
 </body>
 </html>
