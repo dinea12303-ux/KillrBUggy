@@ -1,212 +1,276 @@
-
-            <a href="SSS_навык/chapter693.html" class="chapter-link">Глава 693. «Размышления»</a>
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Библиотека</title>
+    <title>Библиотека Мутаций</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e26; color: #e0e0e0; max-width: 900px; margin: 0 auto; padding: 20px; }
-        h1 { color: #d4a5ff; text-align: center; border-bottom: 2px solid #5a3d7a; padding-bottom: 10px; margin-bottom: 20px; }
         
-        /* Вкладки */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tabs button { flex: 1; padding: 15px; background: #2b2b36; color: #aaa; border: 2px solid #5a3d7a; border-radius: 8px; font-size: 18px; cursor: pointer; transition: 0.3s; font-weight: bold; }
-        .tabs button.active { background: #5a3d7a; color: white; }
-        
-        /* Поиск и Книги */
-        .search-bar { width: 100%; padding: 15px; font-size: 18px; border-radius: 8px; border: 1px solid #5a3d7a; background: #2b2b36; color: white; margin-bottom: 20px; box-sizing: border-box; }
-        .book-section { background: #2b2b36; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #d4a5ff; }
-        .book-title { color: #d4a5ff; border-bottom: 1px solid #5a3d7a; padding-bottom: 10px; margin-top: 0; }
-        .chapter-link { display: block; background: #383845; margin: 10px 0; padding: 15px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 18px; transition: 0.2s; }
-        .chapter-link:hover { background: #5a5a6a; transform: translateX(5px); }
+        /* Шапка */
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #5a3d7a; padding-bottom: 10px; margin-bottom: 20px; }
+        h1 { color: #d4a5ff; margin: 0; font-size: 28px; cursor: pointer; }
+        .icon-btn { background: #383845; color: #d4a5ff; border: 1px solid #5a3d7a; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .icon-btn:hover { background: #5a3d7a; color: white; }
 
-        /* Админка */
-        .admin-panel { background: #2b2b36; padding: 20px; border-radius: 10px; border: 1px dashed #5a3d7a; }
-        .admin-panel label { display: block; margin-top: 15px; color: #d4a5ff; font-weight: bold; font-size: 14px; }
-        input, textarea { width: 100%; box-sizing: border-box; margin-top: 5px; padding: 12px; border-radius: 5px; border: 1px solid #5a3d7a; background: #1e1e26; color: white; font-size: 16px; }
-        .hint { font-size: 12px; color: #888; display: block; margin-top: 5px; }
-        .publish-btn { background: #7a4bb5; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 20px; transition: 0.2s; }
-        .publish-btn:hover { background: #9665d4; }
+        /* Панели и карточки */
+        .panel { background: #2b2b36; padding: 20px; border-radius: 10px; border: 1px dashed #5a3d7a; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .book-card { background: #383845; padding: 20px; border-radius: 10px; border-left: 5px solid #d4a5ff; cursor: pointer; transition: 0.2s; text-align: center; font-size: 18px; font-weight: bold; }
+        .book-card:hover { background: #5a5a6a; transform: translateY(-3px); }
+        .chapter-link { display: block; background: #383845; margin: 10px 0; padding: 15px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 18px; transition: 0.2s; border-left: 3px solid #7a4bb5; }
+        .chapter-link:hover { background: #5a5a6a; padding-left: 25px; }
+
+        /* Вкладки внутри книги */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs button { flex: 1; padding: 12px; background: #2b2b36; color: #aaa; border: 2px solid #5a3d7a; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .tabs button.active { background: #5a3d7a; color: white; }
+
+        /* Формы */
+        input, textarea { width: 100%; box-sizing: border-box; margin-top: 10px; margin-bottom: 15px; padding: 12px; border-radius: 5px; border: 1px solid #5a3d7a; background: #1e1e26; color: white; font-size: 16px; }
+        input[type="search"] { background: #2b2b36; margin-top: 0; }
+        button.action-btn { background: #7a4bb5; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        button.action-btn:hover { background: #9665d4; }
+        .status { text-align: center; font-weight: bold; margin-top: 10px; }
+        .hint { font-size: 12px; color: #888; margin-top: -10px; display: block; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <h1>📚 Библиотека Миров</h1>
+    <header>
+        <h1 onclick="showView('home')">📚 Библиотека Мутаций</h1>
+        <button class="icon-btn" onclick="toggleDisplay('settings-panel')">⚙️ Токен</button>
+    </header>
 
-    <div class="tabs">
-        <button id="btn-read" class="active" onclick="switchTab('read')">📖 Читать</button>
-        <button id="btn-admin" onclick="switchTab('admin')">⚙️ Редакторская</button>
+    <div id="settings-panel" class="panel" style="display: none;">
+        <label style="color:#d4a5ff;">GitHub Токен:</label>
+        <input type="password" id="gh-token" autocomplete="new-password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <span class="hint">Введи один раз и нажми сохранить. Браузер больше не будет путать его с паролями.</span>
+        <button class="action-btn" onclick="saveToken()" style="padding: 10px;">💾 Сохранить токен</button>
+        <p id="token-status" class="status"></p>
     </div>
 
-    <div id="tab-read">
-        <input type="text" id="search-box" class="search-bar" onkeyup="searchSite()" placeholder="🔍 Быстрый поиск по главам...">
+    <div id="view-home">
+        <button class="icon-btn" onclick="toggleDisplay('new-book-panel')" style="width:100%;">+ Создать новую книгу</button>
         
-        <div id="library-content">
-            </div>
+        <div id="new-book-panel" class="panel" style="display: none; margin-top: 15px;">
+            <input type="text" id="new-book-id" placeholder="ID книги (на английском, без пробелов. Напр: lilia_vol1)" autocomplete="off">
+            <input type="text" id="new-book-title" placeholder="Название книги (Напр: Том 1. Система Синтеза)" autocomplete="off">
+            <button class="action-btn" onclick="createNewBook()" id="btn-create-book">Создать</button>
+            <p id="book-status" class="status"></p>
+        </div>
+
+        <div id="books-container" class="grid"></div>
     </div>
 
-    <div id="tab-admin" style="display: none;" class="admin-panel">
-        <label>Ключ доступа (GitHub Token):</label>
-        <input type="password" id="gh-token">
-        
-        <label>ID Книги (создаст папку, пиши на английском без пробелов):</label>
-        <input type="text" id="book-folder" placeholder="Например: lilia_vol1">
-        <span class="hint">Чтобы добавить главу в уже существующую книгу, просто напиши ту же самую папку.</span>
+    <div id="view-book" style="display: none;">
+        <button class="icon-btn" onclick="showView('home')" style="margin-bottom: 15px;">⬅ Назад к книгам</button>
+        <h2 id="current-book-title" style="color: #fff; border-bottom: 1px solid #5a3d7a; padding-bottom: 10px;"></h2>
 
-        <label>Название Книги (для оглавления):</label>
-        <input type="text" id="book-title" placeholder="Например: Том 1. Система Синтеза">
+        <div class="tabs">
+            <button id="tab-read" class="active" onclick="switchBookTab('read')">📖 Оглавление</button>
+            <button id="tab-edit" onclick="switchBookTab('edit')">✍️ Добавить главу</button>
+        </div>
 
-        <label>Номер главы:</label>
-        <input type="number" id="chap-num" placeholder="Например: 1">
+        <div id="subview-read">
+            <input type="search" id="search-box" autocomplete="off" placeholder="🔍 Поиск по главам..." onkeyup="searchChapters()">
+            <div id="chapters-container"></div>
+        </div>
 
-        <label>Название главы:</label>
-        <input type="text" id="chap-title" placeholder="Например: Первая мутация">
-
-        <label>Текст главы:</label>
-        <textarea id="chap-text" rows="10" placeholder="Вставляй текст..."></textarea>
-
-        <button class="publish-btn" onclick="publishChapter()" id="pub-btn">Опубликовать главу</button>
-        <p id="status-msg" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 18px;"></p>
+        <div id="subview-edit" class="panel" style="display: none;">
+            <span class="hint" id="folder-hint" style="color: #4caf50;"></span>
+            <input type="number" id="chap-num" placeholder="Номер главы (напр: 1)" autocomplete="off">
+            <input type="text" id="chap-title" placeholder="Название главы" autocomplete="off">
+            <textarea id="chap-text" rows="12" placeholder="Вставляй текст с мутациями сюда..."></textarea>
+            <button class="action-btn" onclick="publishChapter()" id="pub-btn">Опубликовать главу</button>
+            <p id="chap-status" class="status"></p>
+        </div>
     </div>
+
+    <script id="db-json" type="application/json">
+    {}
+    </script>
 
     <script>
+        const REPO = "dinea12303-ux/KillrBUggy";
+        let db = {};
+        let currentFolder = "";
+
+        // Инициализация при загрузке
         document.addEventListener("DOMContentLoaded", () => {
             const savedToken = localStorage.getItem('myGitHubToken');
             if (savedToken) document.getElementById('gh-token').value = savedToken;
+            
+            // Загружаем базу из HTML
+            try { db = JSON.parse(document.getElementById('db-json').textContent); } 
+            catch (e) { db = {}; }
+            renderBooks();
         });
 
-        function switchTab(tab) {
-            document.getElementById('tab-read').style.display = tab === 'read' ? 'block' : 'none';
-            document.getElementById('tab-admin').style.display = tab === 'admin' ? 'block' : 'none';
-            document.getElementById('btn-read').className = tab === 'read' ? 'active' : '';
-            document.getElementById('btn-admin').className = tab === 'admin' ? 'active' : '';
+        function toggleDisplay(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
         }
 
-        function searchSite() {
-            let input = document.getElementById('search-box').value.toLowerCase();
-            let books = document.querySelectorAll('.book-section');
+        function showView(view) {
+            document.getElementById('view-home').style.display = view === 'home' ? 'block' : 'none';
+            document.getElementById('view-book').style.display = view === 'book' ? 'block' : 'none';
+            if (view === 'home') renderBooks();
+        }
 
-            books.forEach(book => {
-                let links = book.querySelectorAll('.chapter-link');
-                let hasVisible = false;
-                links.forEach(link => {
-                    if (link.innerText.toLowerCase().includes(input)) {
-                        link.style.display = 'block';
-                        hasVisible = true;
-                    } else {
-                        link.style.display = 'none';
-                    }
-                });
-                book.style.display = hasVisible ? 'block' : 'none';
+        function switchBookTab(tab) {
+            document.getElementById('subview-read').style.display = tab === 'read' ? 'block' : 'none';
+            document.getElementById('subview-edit').style.display = tab === 'edit' ? 'block' : 'none';
+            document.getElementById('tab-read').className = tab === 'read' ? 'active' : '';
+            document.getElementById('tab-edit').className = tab === 'edit' ? 'active' : '';
+        }
+
+        function saveToken() {
+            const t = document.getElementById('gh-token').value.trim();
+            if (t) {
+                localStorage.setItem('myGitHubToken', t);
+                document.getElementById('token-status').style.color = "#4caf50";
+                document.getElementById('token-status').innerText = "Токен сохранен!";
+                setTimeout(() => toggleDisplay('settings-panel'), 1500);
+            }
+        }
+
+        function renderBooks() {
+            const container = document.getElementById('books-container');
+            container.innerHTML = '';
+            for (const [folder, data] of Object.entries(db)) {
+                container.innerHTML += `<div class="book-card" onclick="openBook('${folder}')">📁 ${data.title}</div>`;
+            }
+        }
+
+        function openBook(folder) {
+            currentFolder = folder;
+            document.getElementById('current-book-title').innerText = db[folder].title;
+            document.getElementById('folder-hint').innerText = `Глава сохранится в книгу: ${db[folder].title}`;
+            renderChapters();
+            showView('book');
+            switchBookTab('read');
+        }
+
+        function renderChapters() {
+            const container = document.getElementById('chapters-container');
+            container.innerHTML = '';
+            const chapters = db[currentFolder].chapters || [];
+            chapters.forEach(ch => {
+                container.innerHTML += `<a href="${ch.url}" class="chapter-link">Глава ${ch.num}. ${ch.title}</a>`;
             });
+        }
+
+        function searchChapters() {
+            const input = document.getElementById('search-box').value.toLowerCase();
+            const links = document.querySelectorAll('.chapter-link');
+            links.forEach(link => {
+                link.style.display = link.innerText.toLowerCase().includes(input) ? 'block' : 'none';
+            });
+        }
+
+        // --- РАБОТА С GITHUB API ---
+
+        const encodeBase64 = (str) => btoa(unescape(encodeURIComponent(str)));
+        const decodeBase64 = (str) => decodeURIComponent(escape(atob(str)));
+
+        async function updateDatabaseOnGitHub(token) {
+            let res = await fetch(`https://api.github.com/repos/${REPO}/contents/index.html`);
+            const indexData = await res.json();
+            let html = decodeBase64(indexData.content);
+            
+            const regex = /(<script id="db-json" type="application\/json">)[\s\S]*?(<\/script>)/;
+            const newJsonStr = JSON.stringify(db, null, 4);
+            html = html.replace(regex, `$1\n${newJsonStr}\n$2`);
+
+            res = await fetch(`https://api.github.com/repos/${REPO}/contents/index.html`, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Обновление базы данных`, content: encodeBase64(html), sha: indexData.sha })
+            });
+            if (!res.ok) throw new Error("Не удалось обновить index.html");
+        }
+
+        async function createNewBook() {
+            const token = document.getElementById('gh-token').value.trim();
+            const folder = document.getElementById('new-book-id').value.trim().replace(/\s+/g, '_');
+            const title = document.getElementById('new-book-title').value.trim();
+            const status = document.getElementById('book-status');
+            const btn = document.getElementById('btn-create-book');
+
+            if (!token) return alert("Сначала сохрани токен в настройках!");
+            if (!folder || !title) { status.style.color = "#ff6b6b"; status.innerText = "Заполни все поля!"; return; }
+            if (db[folder]) { status.style.color = "#ff6b6b"; status.innerText = "Такой ID уже есть!"; return; }
+
+            btn.disabled = true; status.style.color = "#d4a5ff"; status.innerText = "Создаю...";
+            
+            try {
+                db[folder] = { title: title, chapters: [] };
+                await updateDatabaseOnGitHub(token);
+                status.style.color = "#4caf50"; status.innerText = "✅ Книга создана!";
+                document.getElementById('new-book-id').value = '';
+                document.getElementById('new-book-title').value = '';
+                renderBooks();
+                setTimeout(() => toggleDisplay('new-book-panel'), 1500);
+            } catch (e) {
+                status.style.color = "#ff6b6b"; status.innerText = `❌ Ошибка: ${e.message}`;
+            } finally { btn.disabled = false; }
         }
 
         async function publishChapter() {
             const token = document.getElementById('gh-token').value.trim();
-            const folder = document.getElementById('book-folder').value.trim().replace(/\s+/g, '_');
-            const bookTitle = document.getElementById('book-title').value.trim();
             const num = document.getElementById('chap-num').value.trim();
             const title = document.getElementById('chap-title').value.trim();
             const text = document.getElementById('chap-text').value.trim();
-            const status = document.getElementById('status-msg');
+            const status = document.getElementById('chap-status');
             const btn = document.getElementById('pub-btn');
 
-            if (!token || !folder || !bookTitle || !num || !title || !text) {
-                status.style.color = "#ff6b6b"; status.innerText = "⚠️ Заполни все поля!"; return;
-            }
+            if (!token) return alert("Токен не найден!");
+            if (!num || !title || !text) { status.style.color = "#ff6b6b"; status.innerText = "Заполни все поля!"; return; }
 
-            localStorage.setItem('myGitHubToken', token);
-            btn.disabled = true; status.style.color = "#d4a5ff"; status.innerText = "⏳ Создаю файлы...";
-
-            const repo = "dinea12303-ux/KillrBUggy";
+            btn.disabled = true; status.style.color = "#d4a5ff"; status.innerText = "⏳ Загружаю главу...";
             const currentNum = parseInt(num);
-            
-            // Код навигации для верха и низа страницы
+
             const navHtml = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0; font-family: sans-serif; font-size: 16px; background: #2b2b36; padding: 15px; border-radius: 8px;">
-        ${currentNum > 1 ? `<a href="chapter${currentNum-1}.html" style="color: #d4a5ff; text-decoration: none; padding: 8px 15px; border: 1px solid #d4a5ff; border-radius: 5px;">⬅️ Предыдущая</a>` : `<span style="color: #555; padding: 8px 15px;">⬅️ Предыдущая</span>`}
+        ${currentNum > 1 ? `<a href="chapter${currentNum-1}.html" style="color: #d4a5ff; text-decoration: none; padding: 8px 15px; border: 1px solid #5a3d7a; border-radius: 5px;">⬅️ Назад</a>` : `<span></span>`}
         <a href="../index.html" style="color: #fff; text-decoration: none; font-weight: bold; font-size: 18px;">🏠 В Библиотеку</a>
-        <a href="chapter${currentNum+1}.html" style="color: #d4a5ff; text-decoration: none; padding: 8px 15px; border: 1px solid #d4a5ff; border-radius: 5px;">Следующая ➡️</a>
+        <a href="chapter${currentNum+1}.html" style="color: #d4a5ff; text-decoration: none; padding: 8px 15px; border: 1px solid #5a3d7a; border-radius: 5px;">Вперед ➡️</a>
     </div>`;
 
             const paragraphs = text.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('\n    ');
-            const htmlContent = `<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Глава ${num}: ${title}</title>
-    <style>
-        body { font-family: 'Georgia', serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; font-size: 20px; color: #d0d0d0; background-color: #1e1e26; }
-        p { text-indent: 1.5em; margin-bottom: 1em; }
-    </style>
-</head>
-<body>
-    ${navHtml}
-    <h2 style="color: #fff; text-align: center;">Глава ${num}. ${title}</h2>
-    ${paragraphs}
-    ${navHtml}
-</body>
-</html>`;
-
-            const encodeBase64 = (str) => btoa(unescape(encodeURIComponent(str)));
-            const decodeBase64 = (str) => decodeURIComponent(escape(atob(str)));
+            const htmlContent = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Глава ${num}: ${title}</title><style>body { font-family: 'Georgia', serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; font-size: 20px; color: #d0d0d0; background-color: #1e1e26; } p { text-indent: 1.5em; margin-bottom: 1em; }</style></head><body>${navHtml}<h2 style="color: #fff; text-align: center;">Глава ${num}. ${title}</h2>${paragraphs}${navHtml}</body></html>`;
 
             try {
-                // 1. Заливаем саму главу в папку книги
-                let res = await fetch(`https://api.github.com/repos/${repo}/contents/${folder}/chapter${num}.html`, {
+                // Заливаем файл
+                const fileUrl = `${currentFolder}/chapter${num}.html`;
+                let res = await fetch(`https://api.github.com/repos/${REPO}/contents/${fileUrl}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Добавлена глава ${num} в ${folder}`, content: encodeBase64(htmlContent) })
+                    body: JSON.stringify({ message: `Глава ${num} в ${currentFolder}`, content: encodeBase64(htmlContent) })
                 });
 
-                if (!res.ok) throw new Error("Глава с таким номером уже есть в этой папке, либо ошибка токена.");
+                if (!res.ok) throw new Error("Такой файл уже есть или ошибка токена.");
 
-                status.innerText = "✅ Глава в папке! Обновляю оглавление...";
+                status.innerText = "✅ Файл создан! Обновляю оглавление...";
 
-                // 2. Обновляем оглавление на главной
-                res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`);
-                const indexData = await res.json();
-                let indexHtml = decodeBase64(indexData.content);
-
-                const markerEnd = ``;
-                const newLink = `\n            <a href="${folder}/chapter${num}.html" class="chapter-link">Глава ${num}. ${title}</a>`;
-
-                if (indexHtml.includes(markerEnd)) {
-                    // Книга уже существует, добавляем главу в нее
-                    indexHtml = indexHtml.replace(markerEnd, newLink + '\n    ' + markerEnd);
-                } else {
-                    // Новая книга
-                    const newBookBlock = `
-    <div class="book-section">
-        <h2 class="book-title">📖 ${bookTitle}</h2>${newLink}
-    </div>
-    `;
-                    indexHtml = indexHtml.replace('', newBookBlock + '\n            ');
-                }
-
-                res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Обновлено оглавление (${folder})`, content: encodeBase64(indexHtml), sha: indexData.sha })
-                });
-
-                if (!res.ok) throw new Error("Не удалось обновить оглавление.");
-
-                status.style.color = "#4caf50";
-                status.innerText = `🎉 Готово! Глава добавлена в книгу "${bookTitle}".`;
+                // Обновляем базу
+                if (!db[currentFolder].chapters) db[currentFolder].chapters = [];
+                db[currentFolder].chapters.push({ num: currentNum, title: title, url: fileUrl });
+                // Сортируем главы по номеру
+                db[currentFolder].chapters.sort((a, b) => a.num - b.num);
                 
+                await updateDatabaseOnGitHub(token);
+
+                status.style.color = "#4caf50"; status.innerText = `🎉 Глава опубликована!`;
                 document.getElementById('chap-num').value = '';
                 document.getElementById('chap-title').value = '';
                 document.getElementById('chap-text').value = '';
+                renderChapters();
 
-            } catch (error) {
-                status.style.color = "#ff6b6b"; status.innerText = `❌ Ошибка: ${error.message}`;
-            } finally {
-                btn.disabled = false; btn.innerText = "Опубликовать главу";
-            }
+            } catch (e) {
+                status.style.color = "#ff6b6b"; status.innerText = `❌ Ошибка: ${e.message}`;
+            } finally { btn.disabled = false; btn.innerText = "Опубликовать главу"; }
         }
     </script>
 </body>
