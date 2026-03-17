@@ -1,6 +1,4 @@
-
-            <a href="chapter692.html" class="chapter-link">Глава 692. Размышления</a>
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -38,7 +36,7 @@
         
         <label>Твой GitHub Токен:</label>
         <input type="password" id="gh-token" placeholder="Вставь токен сюда (начинается с ghp_)">
-        <span class="hint">Токен никуда не сохраняется, он нужен сайту только для отправки текста на твой GitHub.</span>
+        <span class="hint">Токен сохранен в памяти твоего браузера. Вводить заново не нужно!</span>
 
         <label>Номер главы:</label>
         <input type="number" id="chap-num" placeholder="Например: 2">
@@ -54,6 +52,14 @@
     </div>
 
     <script>
+        // Восстанавливаем токен при загрузке страницы
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedToken = localStorage.getItem('myGitHubToken');
+            if (savedToken) {
+                document.getElementById('gh-token').value = savedToken;
+            }
+        });
+
         async function publishChapter() {
             const token = document.getElementById('gh-token').value.trim();
             const num = document.getElementById('chap-num').value.trim();
@@ -68,6 +74,9 @@
                 return;
             }
 
+            // Запоминаем токен в браузере навсегда!
+            localStorage.setItem('myGitHubToken', token);
+
             btn.disabled = true;
             btn.innerText = "⏳ Формирую страницы...";
             status.innerText = "Создаю файл главы...";
@@ -75,7 +84,6 @@
 
             const repo = "dinea12303-ux/KillrBUggy";
             
-            // Формируем HTML самой главы (тоже с темным фоном)
             const paragraphs = text.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('\n    ');
             const htmlContent = `<!DOCTYPE html>
 <html lang="ru">
@@ -100,7 +108,6 @@
             const decodeBase64 = (str) => decodeURIComponent(escape(atob(str)));
 
             try {
-                // Отправляем файл главы на GitHub
                 let res = await fetch(`https://api.github.com/repos/${repo}/contents/chapter${num}.html`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
@@ -111,16 +118,13 @@
 
                 status.innerText = "✅ Глава залита! Обновляю оглавление...";
 
-                // Забираем текущий index.html, чтобы обновить в нем ссылки
                 res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`);
                 const indexData = await res.json();
                 let indexHtml = decodeBase64(indexData.content);
 
-                // Добавляем новую кнопку в список
                 const newLink = `\n            <a href="chapter${num}.html" class="chapter-link">Глава ${num}. ${title}</a>`;
                 indexHtml = indexHtml.replace('', newLink + '\n            ');
 
-                // Сохраняем обновленное оглавление
                 res = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
@@ -130,9 +134,8 @@
                 if (!res.ok) throw new Error("Глава создана, но оглавление не обновилось.");
 
                 status.style.color = "#4caf50";
-                status.innerText = `🎉 Глава ${num} успешно опубликована! Перезагрузи страницу через пару минут.`;
+                status.innerText = `🎉 Глава ${num} успешно опубликована!`;
                 
-                // Очищаем форму
                 document.getElementById('chap-num').value = '';
                 document.getElementById('chap-title').value = '';
                 document.getElementById('chap-text').value = '';
