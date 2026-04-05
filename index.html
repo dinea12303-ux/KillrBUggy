@@ -33,6 +33,43 @@
         button.action-btn:hover { background: #9665d4; }
         .status { text-align: center; font-weight: bold; margin-top: 10px; }
         .hint { font-size: 12px; color: #888; margin-top: -10px; display: block; margin-bottom: 10px; }
+
+        /* ===== ПАГИНАЦИЯ ===== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 18px 0 6px 0;
+        }
+        .pagination button {
+            background: #383845;
+            color: #d4a5ff;
+            border: 1px solid #5a3d7a;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            min-width: 48px;
+        }
+        .pagination button:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+        .pagination button:not(:disabled):hover {
+            background: #5a3d7a;
+            color: white;
+        }
+        .pagination .page-info {
+            color: #d4a5ff;
+            font-size: 15px;
+            min-width: 90px;
+            text-align: center;
+            font-weight: bold;
+        }
+        /* ===================== */
     </style>
 </head>
 <body>
@@ -75,6 +112,12 @@
         <div id="subview-read">
             <input type="search" id="search-box" autocomplete="off" placeholder="🔍 Поиск по главам..." onkeyup="searchChapters()">
             <div id="chapters-container"></div>
+            <!-- Блок пагинации -->
+            <div class="pagination" id="pagination-controls">
+                <button id="btn-prev" onclick="changePage(-1)">&#8592;</button>
+                <span class="page-info" id="page-info">Стр. 1 / 1</span>
+                <button id="btn-next" onclick="changePage(1)">&#8594;</button>
+            </div>
         </div>
 
         <div id="subview-edit" class="panel" style="display: none;">
@@ -555,12 +598,19 @@
         ]
     }
 }
-</script>
+    </script>
 
     <script>
         const REPO = "dinea12303-ux/KillrBUggy";
         let db = {};
         let currentFolder = "";
+
+        // ===== ПАГИНАЦИЯ =====
+        const CHAPTERS_PER_PAGE = 15;  // сколько глав на одной странице
+        let currentPage = 1;
+        let filteredChapters = []; // для поиска
+        let isSearchMode = false;
+        // =====================
 
         // Инициализация при загрузке
         document.addEventListener("DOMContentLoaded", () => {
@@ -611,6 +661,9 @@
 
         function openBook(folder) {
             currentFolder = folder;
+            currentPage = 1;
+            isSearchMode = false;
+            document.getElementById('search-box').value = '';
             document.getElementById('current-book-title').innerText = db[folder].title;
             document.getElementById('folder-hint').innerText = `Глава сохранится в книгу: ${db[folder].title}`;
             renderChapters();
@@ -618,21 +671,65 @@
             switchBookTab('read');
         }
 
+        // ===== ОБНОВЛЁННЫЙ renderChapters С ПАГИНАЦИЕЙ =====
         function renderChapters() {
             const container = document.getElementById('chapters-container');
-            container.innerHTML = '';
             const chapters = db[currentFolder].chapters || [];
-            chapters.forEach(ch => {
-                container.innerHTML += `<a href="${ch.url}" class="chapter-link">Глава ${ch.num}. ${ch.title}</a>`;
-            });
+
+            const sourceList = isSearchMode ? filteredChapters : chapters;
+            const totalPages = Math.max(1, Math.ceil(sourceList.length / CHAPTERS_PER_PAGE));
+
+            // Защита от выхода за пределы
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = (currentPage - 1) * CHAPTERS_PER_PAGE;
+            const end = start + CHAPTERS_PER_PAGE;
+            const pageChapters = sourceList.slice(start, end);
+
+            container.innerHTML = '';
+            if (pageChapters.length === 0) {
+                container.innerHTML = '<p style="color:#888; text-align:center; margin-top:20px;">Ничего не найдено</p>';
+            } else {
+                pageChapters.forEach(ch => {
+                    container.innerHTML += `<a href="${ch.url}" class="chapter-link">Глава ${ch.num}. ${ch.title}</a>`;
+                });
+            }
+
+            // Обновляем кнопки пагинации
+            const paginationEl = document.getElementById('pagination-controls');
+            // Прячем пагинацию если глав мало (влезают на одну страницу)
+            paginationEl.style.display = sourceList.length > CHAPTERS_PER_PAGE ? 'flex' : 'none';
+
+            document.getElementById('btn-prev').disabled = currentPage <= 1;
+            document.getElementById('btn-next').disabled = currentPage >= totalPages;
+            document.getElementById('page-info').innerText = `Стр. ${currentPage} / ${totalPages}`;
         }
 
+        function changePage(delta) {
+            currentPage += delta;
+            renderChapters();
+            // Прокрутка вверх к списку глав
+            document.getElementById('search-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // ====================================================
+
         function searchChapters() {
-            const input = document.getElementById('search-box').value.toLowerCase();
-            const links = document.querySelectorAll('.chapter-link');
-            links.forEach(link => {
-                link.style.display = link.innerText.toLowerCase().includes(input) ? 'block' : 'none';
-            });
+            const input = document.getElementById('search-box').value.toLowerCase().trim();
+            const chapters = db[currentFolder].chapters || [];
+
+            if (input === '') {
+                isSearchMode = false;
+                filteredChapters = [];
+            } else {
+                isSearchMode = true;
+                filteredChapters = chapters.filter(ch =>
+                    `Глава ${ch.num}. ${ch.title}`.toLowerCase().includes(input)
+                );
+            }
+
+            currentPage = 1;
+            renderChapters();
         }
 
         // --- РАБОТА С GITHUB API ---
